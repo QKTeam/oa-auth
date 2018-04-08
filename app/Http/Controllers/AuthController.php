@@ -13,6 +13,12 @@ use Ramsey\Uuid\Uuid;
 
 class AuthController extends Controller
 {
+    private function generatePassword ($length = 16) {
+        $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        $password = '';
+        for ( $i = 0; $i < $length; $i++ ) $password .= $chars[mt_rand(0, strlen($chars) - 1)];
+        return $password;
+    }
     private function check ($link, $from) {
         if (strpos($from, $link) === false) return false;
         return true;
@@ -25,22 +31,26 @@ class AuthController extends Controller
                 'unique:user,username',
                 'regex:/^[A-Za-z][A-Za-z0-9_\.]{5,19}$/',
             ],
-            'password' => 'required|string|size:40',
             'email' => 'required|email|unique:user,email',
             'role_id' => 'required|integer',
             'gender' => 'integer|in:0,1',
             'name' => 'string',
         ]);
         if ($validator->fails()) return response($validator->errors(), 422);
+
         $user = new User();
         $user->username = $request->input('username');
-        $user->password = bcrypt($request->input('password'));
+        $password = $this->generatePassword();
+        MailController::sendPassword($password, $request->input('email'), $user->username);
+        $user->password = bcrypt(sha1($password));
         $user->role_id = $request->input('role_id');
         $user->email = $request->input('email');
         $user->gender = $request->input('gender', 1);
         $user->name = $request->input('name', $user->username);
         $user->save();
-        return view('home');
+        return response([
+            'status'=> 1,
+        ]);
     }
     public function login (Request $request) {
         $validator = Validator::make($request->all(), [
@@ -54,11 +64,6 @@ class AuthController extends Controller
 
         if ($validator->fails()) return response($validator->errors(), 422);
         $user = null;
-//        if ($request->input('username', null)) {
-//            $user = User::where('username', $request->input('username'))->first();
-//        } else if ($request->input('email', null)) {
-//            $user = User::where('email', $request->input('email'))->first();
-//        }
         $user = User::where('username', $request->input('username'))
             ->orWhere('email', $request->input('username'))->first();
         if ($user === null) return response('User Not Found', 404);
@@ -99,6 +104,32 @@ class AuthController extends Controller
         ]);
         else return response([
             'status' => 0,
+        ]);
+    }
+    public function isAdmin (Request $request) {
+        if ($request['now_user'] && $request['now_user']->id === 1) return response([
+            'status' => 1,
+        ]);
+        else return response([
+            'status' => 0,
+        ]);
+    }
+    public function getAuth (Request $request) {
+        $user = $request->input('now_user', null);
+        if ($user === null) return response([]);
+        return response([
+            'username' => $user->username,
+            'email' => $user->email,
+            'role' => [
+                'id' => $user->role->id,
+                'name' => $user->role->name,
+                'short_name' => $user->role->short_name,
+                'icon' => $user->role->icon,
+                'color' => $user->role->color,
+            ],
+            'phone' => $user->phone,
+            'name' => $user->name,
+            'gender' => $user->gender,
         ]);
     }
 }

@@ -1,4 +1,4 @@
-@extends('view')
+@extends('admin/view')
 <style>
     .link {
         font-size: 24px;
@@ -6,9 +6,13 @@
 </style>
 @section('content')
 <div>
-    <h1>Welcome to QKteam's Portal Admin</h1>
+    <h1>Roles Controller</h1>
+    <div>
+        <h3><a href="https://fontawesome.com/icons?d=gallery">icon list</a></h3>
+    </div>
     <p>
         <button id="logout" class="btn btn-default" style="float: right;">退出登录</button>
+        <button id="back" class="btn btn-default" style="float: right; margin-right: 10px">返回</button>
     </p>
     <div>跳转链接</div>
     <div>
@@ -41,6 +45,9 @@
             localStorage.setItem('token', '')
             localStorage.setItem('remember_token', '')
             window.location.href = '/'
+        })
+        $('#back').click(function () {
+            window.location.href = '/admin'
         })
     })
 </script>

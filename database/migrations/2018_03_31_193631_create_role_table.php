@@ -15,8 +15,8 @@ class CreateRoleTable extends Migration
     {
         Schema::create('role', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name');
-            $table->string('short_name');
+            $table->string('name')->unique();
+            $table->string('short_name')->unique();
             $table->string('icon');
             $table->string('color');
             $table->timestamps();
@@ -34,14 +34,14 @@ class CreateRoleTable extends Migration
                 'name' => '大佬',
                 'short_name' => 'core',
                 'color' => '#108ee9',
-                'icon' => 'api',
+                'icon' => 'sun',
             ],
             [
                 'id' => 3,
                 'name' => '成员',
                 'short_name' => 'member',
                 'color' => '#2db7f5',
-                'icon' => 'bulb',
+                'icon' => 'lightbulb',
             ],
             [
                 'id' => 4,
@@ -62,7 +62,7 @@ class CreateRoleTable extends Migration
                 'name' => '指导老师',
                 'short_name' => 'tutor',
                 'color' => '#eb2f96',
-                'icon' => 'heart-o',
+                'icon' => 'heart',
             ],
         ]);
     }

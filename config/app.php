@@ -210,6 +210,7 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
 
         'check' => App\Http\Middleware\check::class,
+        'isAdmin' => App\Http\Middleware\isAdmin::class,
     ],
 
 ];

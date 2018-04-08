@@ -1,4 +1,4 @@
-@extends('view')
+@extends('admin/view')
 <style>
     .link {
         font-size: 24px;
@@ -9,6 +9,7 @@
     <h1>Members Controller</h1>
     <p>
         <button id="logout" class="btn btn-default" style="float: right;">退出登录</button>
+        <button id="back" class="btn btn-default" style="float: right; margin-right: 10px">返回</button>
     </p>
     <div>跳转链接</div>
     <div>
@@ -21,7 +22,7 @@
     $(document).ready(function () {
         $.ajax({
             type: 'GET',
-            url: '/api/logStatus',
+            url: '/api/isAdmin',
             data: {
                 token: localStorage.getItem('token'),
                 remember_token: localStorage.getItem('remember_token')
@@ -30,7 +31,7 @@
             success: function (data) {
                 console.log(data.status)
                 if (data.status === 0) {
-                    window.location.href = '/login'
+                    window.location.href = '/'
                 }
             },
             error: function (e) {
@@ -41,6 +42,9 @@
             localStorage.setItem('token', '')
             localStorage.setItem('remember_token', '')
             window.location.href = '/'
+        })
+        $('#back').click(function () {
+            window.location.href = '/admin'
         })
     })
 </script>

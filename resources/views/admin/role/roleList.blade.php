@@ -7,22 +7,23 @@
 </style>
 @section('content')
 <div>
-    <h1>Members List</h1>
+    <h1>Roles List</h1>
     <p>
         <button id="logout" class="btn btn-default" style="float: right;">退出登录</button>
         <button id="back" class="btn btn-default" style="float: right; margin-right: 10px">返回</button>
     </p>
+    <div>
+        <h3><a href="https://fontawesome.com/icons?d=gallery">icon list</a></h3>
+    </div>
     <div style="margin-top: 50px;">
-        @foreach($users as $user)
+        @foreach($roles as $role)
             <div style="border: 1px solid #8c8c8c; margin-bottom: 10px; font-size: 20px;">
-                <div>UserName: <p id="{{'user' . $user['id']}}" class="detail">{{$user['username']}}</p></div>
-                <div>Email: <p class="detail">{{$user['email']}}</p></div>
-                <div>Role: <p class="detail">{{$user['role_name']}}</p></div>
-                <div>Phone: <p class="detail">{{$user['phone']}}</p></div>
-                <div>Name: <p class="detail">{{$user['name']}}</p></div>
-                <div>Gender: <p class="detail">{{$user['gender']}}</p></div>
-                <button class="btn btn-default" name="change" id="{{'change' . $user['id']}}" style="display: inline-block;">修改</button>
-                <button class="btn btn-default" name="delete" id="{{'delete' . $user['id']}}" style="display: inline-block;">删除</button>
+                <div>Name: <p id="{{'role' . $role['id']}}" class="detail">{{$role['name']}}</p></div>
+                <div>ShortName: <p class="detail">{{$role['short_name']}}</p></div>
+                <div>Icon: <i class="fas fa-{{$role['icon']}}"></i><p class="detail">{{$role['icon']}}</p></div>
+                <div>Color: <p class="detail" style="margin: 0; width: 20px; height: 20px; background-color: <?php echo $role['color'] ?>;"></p><p class="detail">{{$role['color']}}</p></div>
+                <button class="btn btn-default" name="change" id="{{'change' . $role['id']}}" style="display: inline-block;">修改</button>
+                <button class="btn btn-default" name="delete" id="{{'delete' . $role['id']}}" style="display: inline-block;">删除</button>
             </div>
         @endforeach
     </div>
@@ -39,7 +40,6 @@
             },
             dataType: 'json',
             success: function (data) {
-                console.log(data.status)
                 if (data.status === 0) {
                     window.location.href = '/'
                 }
@@ -54,26 +54,26 @@
             window.location.href = '/'
         })
         $('#back').click(function () {
-            window.location.href = '/admin/user'
+            window.location.href = '/admin/role'
         })
         var changeButton = $('button[name=change]')
         for (var i = 0; i < changeButton.length; i++) {
             $('#' + changeButton[i].id).click(function () {
                 var id = this.id.match(pattern)[0]
-                window.location.href = '/admin/user/update/' + id
+                alert('为什么要修改呢，不如删除重新创建吧')
             })
         }
         var deleteButton = $('button[name=delete]')
         for (var i = 0; i < deleteButton.length; i++) {
             $('#' + deleteButton[i].id).click(function () {
                 var id = this.id.match(pattern)[0]
-                var flag = confirm('确认删除用户\n' + $('#user' + id).text())
+                var flag = confirm('确认删除角色\n' + $('#role' + id).text())
                 if (flag === false) return
                 $.ajax({
                     type: 'DELETE',
-                    url: '/api/user/delete',
+                    url: '/api/role/delete',
                     data: {
-                        user_id: id,
+                        role_id: id,
                     },
                     dataType: 'json',
                     success: function (data) {
