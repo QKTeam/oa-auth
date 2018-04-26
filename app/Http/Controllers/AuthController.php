@@ -118,6 +118,7 @@ class AuthController extends Controller
         $user = $request->input('now_user', null);
         if ($user === null) return response([]);
         return response([
+            'id' => $user->id,
             'username' => $user->username,
             'email' => $user->email,
             'role' => [
